@@ -15,7 +15,7 @@ function App() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/compress",
+        "https://video-compressor-backend.glitch.me/api/compress",
         {
           video: inputFile,
           fps,
