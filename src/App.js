@@ -15,7 +15,7 @@ function App() {
 
     try {
       const response = await axios.post(
-        "https://video-compressor-backend.glitch.me/api/compress",
+        "http://compressor.drudotstech.com/compress",
         {
           video: inputFile,
           fps,
@@ -76,7 +76,6 @@ function App() {
           style={{ width: "100%", height: "100vh" }}
           autoPlay
           loop
-          
         ></video>
       </div>
     </div>
