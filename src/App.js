@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Col, Container, Row, Spinner } from "reactstrap";
 
 function App() {
   const [inputFile, setInputFile] = useState(null);
@@ -7,11 +8,15 @@ function App() {
   const [bitrate, setBitrate] = useState(1000);
   const [video, setVideo] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleUpload = async () => {
     if (!inputFile) {
       alert("Please select a video file");
       return;
     }
+
+    setIsLoading(true);
 
     const formData = new FormData();
     formData.append("video", inputFile);
@@ -34,31 +39,68 @@ function App() {
       const videoUrl = URL.createObjectURL(videoBlob);
 
       setVideo(videoUrl);
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error("Error during upload:", error);
     }
   };
 
   return (
-    <div className="App">
-      <h1>Video Compression App</h1>
-      <input type="file" onChange={(e) => setInputFile(e.target.files[0])} />
-      <br />
-      <label>FPS:</label>
-      <input
-        type="number"
-        value={fps}
-        onChange={(e) => setFps(e.target.value)}
-      />
-      <br />
-      <label>Bitrate (kbps):</label>
-      <input
-        type="number"
-        value={bitrate}
-        onChange={(e) => setBitrate(e.target.value)}
-      />
-      <br />
-      <button onClick={handleUpload}>Compress</button>
+    <>
+      <Container fluid>
+        <Container>
+          <Row className="justify-content-center">
+            <Col lg={6}>
+              <Row>
+                <Col className="text-center">
+                  <h1>Video Compression App</h1>
+                </Col>
+              </Row>
+              <Row className="my-3">
+                <Col>
+                  <input
+                    type="file"
+                    onChange={(e) => setInputFile(e.target.files[0])}
+                  />
+                </Col>
+              </Row>
+              <Row className="my-3">
+                <Col>
+                  <label>Bitrate (kbps):</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={bitrate}
+                    onChange={(e) => setBitrate(e.target.value)}
+                  />
+                </Col>
+
+                <Col>
+                  <label>FPS:</label>
+                  <input
+                    type="number"
+                    value={fps}
+                    className="form-control"
+                    onChange={(e) => setFps(e.target.value)}
+                  />
+                </Col>
+              </Row>
+              <Row className="my-3">
+                <Col>
+                  <button
+                    disabled={isLoading}
+                    className="w-100 btn btn-md btn-block btn-primary"
+                    onClick={handleUpload}
+                  >
+                    {isLoading ? <Spinner /> : "Compress"}
+                  </button>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Container>
+      </Container>
 
       {video && (
         <div>
@@ -70,7 +112,7 @@ function App() {
           ></video>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
