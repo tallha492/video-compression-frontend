@@ -21,7 +21,7 @@ function App() {
 
       const response = await axios.post(
         "http://compressor.drudotstech.com/compress",
-        formData,
+        { formData },
         {
           headers: {
             "Content-Type":
