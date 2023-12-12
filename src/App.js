@@ -14,18 +14,19 @@ function App() {
     }
 
     try {
+      const formData = new FormData();
+      formData.append("fps", fps);
+      formData.append("bitrate", bitrate);
+      formData.append("video", inputFile);
+
       const response = await axios.post(
         "http://compressor.drudotstech.com/compress",
-        {
-          video: inputFile,
-          fps,
-          bitrate,
-        },
+        formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type":
+              "multipart/form-data; boundary=---------------------------123456789012345678901234567890",
           },
-          responseType: "arraybuffer", // Handle binary data
         }
       );
 
