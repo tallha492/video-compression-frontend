@@ -15,8 +15,8 @@ function App() {
 
     const formData = new FormData();
     formData.append("video", inputFile);
-    formData.append("fps", fps); // Add fps parameter
-    formData.append("bitrate", bitrate); // Add bitrate parameter
+    formData.append("fps", fps);
+    formData.append("bitrate", bitrate);
 
     try {
       const response = await axios.post(
@@ -26,19 +26,14 @@ function App() {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          responseType: "blob",
         }
       );
 
-      console.log(response.data);
+      const videoBlob = new Blob([response.data], { type: "video/mp4" });
+      const videoUrl = URL.createObjectURL(videoBlob);
 
-      // Assuming the server response is a base64-encoded video
-      const base64Video = response.data;
-
-      // Convert base64 to Blob
-      const blob = base64toBlob(base64Video, "video/mp4");
-
-      // Set the Blob as the video source
-      setVideo(blob);
+      setVideo(videoUrl);
     } catch (error) {
       console.error("Error during upload:", error);
     }
@@ -68,7 +63,7 @@ function App() {
       {video && (
         <div>
           <video
-            src={URL.createObjectURL(video)}
+            src={video}
             style={{ width: "100%", height: "100vh" }}
             autoPlay
             loop
@@ -80,24 +75,3 @@ function App() {
 }
 
 export default App;
-
-const base64toBlob = (base64, mimeType) => {
-  const parts = base64.split(",");
-  const data = parts[1] ? parts[1] : parts[0];
-  const byteCharacters = atob(data);
-  const byteArrays = [];
-
-  for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-    const slice = byteCharacters.slice(offset, offset + 512);
-
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-
-  return new Blob(byteArrays, { type: mimeType });
-};
