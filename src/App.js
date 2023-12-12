@@ -13,31 +13,28 @@ function App() {
       return;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append("fps", fps);
-      formData.append("bitrate", bitrate);
-      formData.append("video", inputFile);
-
-      const response = await axios.post(
+    axios
+      .post(
         "http://compressor.drudotstech.com/compress",
-        { fps, bitrate, video: inputFile },
+        {
+          fps,
+          bitrate,
+          video: inputFile,
+        },
         {
           headers: {
-            "Content-Type":
-              "multipart/form-data; boundary=---------------------------123456789012345678901234567890",
+            "Content-Type": "multipart/form-data",
           },
         }
-      );
-
-      const base64Video = arrayBufferToBase64(response.data);
-      const blob = base64toBlob(base64Video, "video/mp4");
-
-      setVideo(blob);
-    } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred during compression.");
-    }
+      )
+      .then((res) => {
+        const base64Video = arrayBufferToBase64(res.data);
+        const blob = base64toBlob(base64Video, "video/mp4");
+        setVideo(blob);
+      })
+      .catch((err) => {
+        alert(err);
+      });
   };
 
   // Function to convert array buffer to base64
