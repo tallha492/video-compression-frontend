@@ -50,9 +50,13 @@ function App() {
     <>
       <Container fluid>
         <Container>
-          <Row className="justify-content-center">
-            <Col lg={6}>
-              <Row>
+          <Row className="justify-content-center py-5">
+            <Col
+              lg={6}
+              className="p-3 border border-1 border-inherit"
+              style={{ borderRadius: "16px" }}
+            >
+              <Row className="border-bottom">
                 <Col className="text-center">
                   <h1>Video Compression App</h1>
                 </Col>
@@ -99,19 +103,23 @@ function App() {
               </Row>
             </Col>
           </Row>
+
+          <Row>
+            <Col>
+              {video && (
+                <div>
+                  <video
+                    src={video}
+                    style={{ width: "100%", height: "100vh" }}
+                    autoPlay
+                    loop
+                  ></video>
+                </div>
+              )}
+            </Col>
+          </Row>
         </Container>
       </Container>
-
-      {video && (
-        <div>
-          <video
-            src={video}
-            style={{ width: "100%", height: "100vh" }}
-            autoPlay
-            loop
-          ></video>
-        </div>
-      )}
     </>
   );
 }
