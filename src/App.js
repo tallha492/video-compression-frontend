@@ -13,38 +13,35 @@ function App() {
       return;
     }
 
-    axios
-      .post(
+    const formData = new FormData();
+    formData.append("video", inputFile);
+    formData.append("fps", fps); // Add fps parameter
+    formData.append("bitrate", bitrate); // Add bitrate parameter
+
+    try {
+      const response = await axios.post(
         "http://compressor.drudotstech.com/compress",
-        {
-          fps,
-          bitrate,
-          video: inputFile,
-        },
+        formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         }
-      )
-      .then((res) => {
-        const base64Video = arrayBufferToBase64(res.data);
-        const blob = base64toBlob(base64Video, "video/mp4");
-        setVideo(blob);
-      })
-      .catch((err) => {
-        alert(err);
-      });
-  };
+      );
 
-  // Function to convert array buffer to base64
-  const arrayBufferToBase64 = (buffer) => {
-    let binary = "";
-    const bytes = new Uint8Array(buffer);
-    for (let i = 0; i < bytes.length; i++) {
-      binary += String.fromCharCode(bytes[i]);
+      console.log(response.data);
+
+      // Assuming the server response is a base64-encoded video
+      const base64Video = response.data;
+
+      // Convert base64 to Blob
+      const blob = base64toBlob(base64Video, "video/mp4");
+
+      // Set the Blob as the video source
+      setVideo(blob);
+    } catch (error) {
+      console.error("Error during upload:", error);
     }
-    return btoa(binary);
   };
 
   return (
@@ -68,23 +65,26 @@ function App() {
       <br />
       <button onClick={handleUpload}>Compress</button>
 
-      <div>
-        <video
-          src={video && URL.createObjectURL(video)}
-          style={{ width: "100%", height: "100vh" }}
-          autoPlay
-          loop
-        ></video>
-      </div>
+      {video && (
+        <div>
+          <video
+            src={URL.createObjectURL(video)}
+            style={{ width: "100%", height: "100vh" }}
+            autoPlay
+            loop
+          ></video>
+        </div>
+      )}
     </div>
   );
 }
 
 export default App;
 
-// Function to convert base64 to Blob
 const base64toBlob = (base64, mimeType) => {
-  const byteCharacters = atob(base64);
+  const parts = base64.split(",");
+  const data = parts[1] ? parts[1] : parts[0];
+  const byteCharacters = atob(data);
   const byteArrays = [];
 
   for (let offset = 0; offset < byteCharacters.length; offset += 512) {
