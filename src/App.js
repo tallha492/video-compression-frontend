@@ -65,6 +65,7 @@ function App() {
                 <Col>
                   <input
                     type="file"
+                    accept="video/mp4"
                     onChange={(e) => setInputFile(e.target.files[0])}
                   />
                 </Col>
