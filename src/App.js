@@ -25,20 +25,18 @@ function App() {
 
     try {
       const response = await axios.post(
-        "https://content.medicalradar.es/compress",
+        "http://localhost:5000/api/compress",
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          responseType: "blob",
         }
       );
 
-      const videoBlob = new Blob([response.data], { type: "video/mp4" });
-      const videoUrl = URL.createObjectURL(videoBlob);
+      const videoBlob = new Blob([response.data.video], { type: "video/mp4" });
 
-      setVideo(videoUrl);
+      setVideo(videoBlob);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -46,9 +44,22 @@ function App() {
     }
   };
 
+  const handleDownload = () => {
+    if (video) {
+      const url = URL.createObjectURL(video);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "compressed_video.mp4";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+
   return (
     <>
-      <Container fluid>
+      <>
         <Container>
           <Row className="justify-content-center py-5">
             <Col
@@ -58,7 +69,7 @@ function App() {
             >
               <Row className="border-bottom">
                 <Col className="text-center">
-                  <h1>Video Compression App</h1>
+                  <h1>Video Compressor</h1>
                 </Col>
               </Row>
               <Row className="my-3">
@@ -108,19 +119,24 @@ function App() {
           <Row>
             <Col>
               {video && (
-                <div>
-                  <video
-                    src={video}
-                    style={{ width: "100%", height: "100vh" }}
-                    autoPlay
-                    loop
-                  ></video>
-                </div>
+                <>
+                  <div>
+                    <button
+                      className="w-50 btn btn-md btn-block btn-primary"
+                      onClick={handleDownload}
+                    >
+                      Download
+                    </button>
+                  </div>
+                  <div>
+                    <video src={URL.createObjectURL(video)}></video>
+                  </div>
+                </>
               )}
             </Col>
           </Row>
         </Container>
-      </Container>
+      </>
     </>
   );
 }
