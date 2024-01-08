@@ -159,7 +159,7 @@ function App() {
                     className="w-100 btn btn-md btn-block btn-outline-primary fw-bold"
                     onClick={handleUpload}
                   >
-                    {isLoading ? <Spinner /> : "Compress"}
+                    {isLoading ? <Spinner size="sm" /> : "Compress"}
                   </button>
                 </Col>
                 <Col>
@@ -170,7 +170,7 @@ function App() {
                       handleDetails();
                     }}
                   >
-                    {spin ? <Spinner /> : "Details"}
+                    {spin ? <Spinner size="sm" /> : "Details"}
                   </button>
                 </Col>
                 {video && (
