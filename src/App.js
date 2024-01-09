@@ -22,6 +22,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [compressedVideo, setCompressedVideo] = useState(null);
   const [spin, setSpin] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const handleUpload = async () => {
     if (!inputFile) {
@@ -37,12 +38,21 @@ function App() {
     formData.append("bitrate", bitrate);
 
     try {
-      const response = await axios.post(BaseURL + "/api/compress", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+      const response = await axios.post(
+        BaseURL + "/api/compress",
+        formData,
+        {
+          onUploadProgress: (data) => {
+            setProgress(Math.round((100 * data.loaded) / data.total));
+          },
         },
-        responseType: "blob",
-      });
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          responseType: "blob",
+        }
+      );
 
       const videoBlob = new Blob([response.data], { type: "video/mp4" });
 
@@ -159,7 +169,7 @@ function App() {
                     className="w-100 btn btn-md btn-block btn-outline-primary fw-bold"
                     onClick={handleUpload}
                   >
-                    {isLoading ? <Spinner size="sm" /> : "Compress"}
+                    {progress !== 100 ? progress + "%" : "Compress"}
                   </button>
                 </Col>
                 <Col>
