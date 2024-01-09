@@ -169,7 +169,9 @@ function App() {
                     className="w-100 btn btn-md btn-block btn-outline-primary fw-bold"
                     onClick={handleUpload}
                   >
-                    {progress !== 100 ? progress + "%" : "Compress"}
+                    {progress !== 100 && progress > 0
+                      ? progress + "%"
+                      : "Compress"}
                   </button>
                 </Col>
                 <Col>
